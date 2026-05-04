@@ -12,8 +12,14 @@ int passed = 0, failed = 0;
         else      { std::cout << "  [FAIL] " name "\n"; ++failed; } \
     } while(0)
 
-// Use a temp file for tests
-const std::string TMP = "/tmp/taskflow_test.dat";
+// Use a temp file for tests (cross-platform)
+static std::string getTmp() {
+    const char* tmp = std::getenv("TEMP");   // Windows
+    if (!tmp) tmp = std::getenv("TMPDIR");   // macOS/Linux
+    if (!tmp) tmp = "/tmp";                  // fallback
+    return std::string(tmp) + "/taskflow_test.dat";
+}
+const std::string TMP = getTmp();
 
 void cleanup() {
     std::remove(TMP.c_str());
